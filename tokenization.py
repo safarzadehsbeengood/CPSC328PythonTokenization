@@ -16,8 +16,9 @@
 import sys
 from categories import DELIMITERS, OPERATORS, KEYWORDS
 
-NEWLINE_OR_SPACE_OR_DELIMITER = {'\n', ' '}.union(DELIMITERS)
+NEWLINE_OR_SPACE_OR_DELIMITER = {'\n', ' '}.union(DELIMITERS)   # the main separating characters for other token types
 
+# a class for holding sets of tokens
 class Tokens:
     keywords = set() 
     identifiers = set()
@@ -26,6 +27,7 @@ class Tokens:
     literals = set()
     comments = set()
     
+    # return a map for easy printing
     def asMap(self):
         return {
             "Keywords": self.keywords,
@@ -36,10 +38,12 @@ class Tokens:
             "Comments": self.comments
         }
         
+    # a print function
     def print(self):
         for label, tokens in self.asMap().items():
             print(f'> {label}:\n\t* {'\n\t* '.join(tokens)}')
             
+    # return the token count
     def tokenCount(self):
         ct = 0
         for tokens in (self.asMap().values()):
@@ -49,7 +53,12 @@ class Tokens:
 masterTokens = Tokens()
 
 def tokenize_line(s: str):
+    """
+    Parse the line and add the tokens to masterTokens
 
+    Args:
+        s (str): The line to be parsed and tokenized
+    """
     def find_next(start: int, target):
         '''
         Returns the index of the first character found 
@@ -137,10 +146,10 @@ if len(sys.argv) < 2 or len(sys.argv) > 2:
     print("[tokenization.py] -> Error: ")
     sys.exit("\tExample usage: python3 tokenize.py [filepath]")
 
+# remove the inline comments from already formatted code
 def clean_code(lines):
     res = [line.split("#")[0] for line in lines]
     return res
-    
 
 # file parsing
 with open(sys.argv[1], 'r') as file:
@@ -149,6 +158,8 @@ with open(sys.argv[1], 'r') as file:
     file.seek(0)
     # lines = [' '.join(line.strip().split()) for line in file.read().split('\n') if (line.strip() != '' and not line.strip()[0] == '#')]
     lines = []
+    
+    # get inline comments
     for line in file.readlines():
         if not line.strip() == '':
             if line.strip()[0] == "#":
@@ -156,6 +167,8 @@ with open(sys.argv[1], 'r') as file:
             else:
                 lines.append(' '.join(line.strip().split()))
     print(f'> Cleaned code:\n{"-"*60}\n{'\n'.join(clean_code(lines))}\n{"-"*60}\n')
+    
+    # Tokenize the lines, avoid triple-quote comments
     i = 0
     while i < len(lines): 
         if lines[i] == '"""':
