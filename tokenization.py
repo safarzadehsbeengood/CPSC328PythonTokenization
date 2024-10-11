@@ -117,7 +117,7 @@ def tokenize_line(s: str):
         elif s[curr] in OPERATORS:
             # print("OPERATOR")
             if s[curr:curr+1] in OPERATORS:
-                masterTokens.operators.add(s[curr:curr+1])
+                masterTokens.operators.add(s[curr:curr+2])
                 curr += 2
             else:
                 masterTokens.operators.add(s[curr])
